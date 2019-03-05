@@ -128,32 +128,46 @@ function getLargestSet(colorHash){
   var largestSet={}
   var largestSetLength=0;
   for (var i=1; i<=tot; i++){
-    if (blocksLeft[i]!=undefined){
-      //has't been explored yet
+    //Not efficient it checks every single block again
       var tempSet= getConnections(colorHash, i);
       var setLength = objectLength(tempSet);
-      console.log("Current set:");
-      console.log(tempSet);
-      console.log("Current set length= " + setLength);
-      //consider all items in set as itemsExplored
-      for (var key in tempSet){
-        if (blocksLeft[key]!=undefined){
-          delete blocksLeft[key];
-          console.log("Removed block " + key)
-        }
-      }
       if (setLength>largestSetLength){
         largestSet=tempSet;
         largestSetLength=setLength;
-        console.log("largest set length= " + largestSetLength)
       }
-    }
   }
   return largestSet;
 }
+
 //mainProgram------------------------------------------------------------------
 sides=5;
 var colors=["red","green","blue"];
 var cubeTable= document.getElementById("colorBlocks");
 colorBlocks=randomColors(sides, colors);
 drawCube(colorBlocks,cubeTable);
+
+function highlightBlocks(colorHash=colorBlocks){
+  var HLitems=getLargestSet(colorHash);
+  var tot=objectLength(colorHash)
+  for (var i=1; i<=tot; i++){
+    var highLight=HLitems[i]!=undefined; //true if number part og HLitems
+    var blockHTML = document.querySelector("#cube" + i);
+    var color=blockHTML.className.split(" ")[1];
+    if (highLight){
+      blockHTML.className= "square " + color + " highLight";
+
+    }
+    else{
+      blockHTML.className= "square " + color + " noHighLight";
+    }
+  }
+}
+
+function unhighlightBlocks(colorHash=colorBlocks){
+  var tot=objectLength(colorHash)
+  for (var i=1; i<=tot; i++){
+    var blockHTML = document.querySelector("#cube" + i);
+    var color=colorHash[i];
+    blockHTML.className= "square " + color;
+  }
+}
