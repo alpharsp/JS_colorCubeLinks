@@ -92,15 +92,11 @@ function getConnectionsRecursion(colorHash, position, involvedItems){
   var color = itemColor(colorHash, position);
   itemsExplored[position]=color;
   connections[position]=color;
-  console.log("After recursive call: ");
-  console.log("Connections: "); console.log(connections);
-  console.log("itemsExplored:"); console.log(itemsExplored);
   var neighbors= getNeighbors(colorHash, position);
   //Iterates through every neighbor
   for (var neighbor of neighbors){
     if (itemsExplored[neighbor]==undefined){
       //If the neighbor was not already explored then do the following
-      console.log("Current neighbor: " + neighbor + " | Color: " + neighborColor);
       var neighborColor=colorHash[neighbor];
       //if the neighbor color is the same color as the block being evaluated
       if (neighborColor===color){
@@ -123,11 +119,38 @@ function getConnections(colorHash,position){
   involvedItems=[connections,itemsExplored];
   var color=colorHash[position];
   var connections = getConnectionsRecursion(colorHash,position,involvedItems)[0];
-  console.log(color + " connections are:");
-  console.log(connections);
   return connections;
 }
 
+function getLargestSet(colorHash){
+  var blocksLeft=colorHash;
+  var tot= objectLength(blocksLeft);
+  var largestSet={}
+  var largestSetLength=0;
+  for (var i=1; i<=tot; i++){
+    if (blocksLeft[i]!=undefined){
+      //has't been explored yet
+      var tempSet= getConnections(colorHash, i);
+      var setLength = objectLength(tempSet);
+      console.log("Current set:");
+      console.log(tempSet);
+      console.log("Current set length= " + setLength);
+      //consider all items in set as itemsExplored
+      for (var key in tempSet){
+        if (blocksLeft[key]!=undefined){
+          delete blocksLeft[key];
+          console.log("Removed block " + key)
+        }
+      }
+      if (setLength>largestSetLength){
+        largestSet=tempSet;
+        largestSetLength=setLength;
+        console.log("largest set length= " + largestSetLength)
+      }
+    }
+  }
+  return largestSet;
+}
 //mainProgram------------------------------------------------------------------
 sides=5;
 var colors=["red","green","blue"];
